@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props"/>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
 
 	<PropertyGroup>
-		<TargetFramework>net472</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>NullGC.Analyzer.Vsix</RootNamespace>
 		<AssemblyName>NullGC.Analyzer.Vsix</AssemblyName>
 	</PropertyGroup>
@@ -22,8 +22,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="..\..\README.md"/>
-		<None Remove="..\icon.ico"/>
+		<None Remove="..\..\README.md" />
+		<None Remove="..\icon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -36,8 +36,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.8.2365" PrivateAssets="all"/>
-		<PackageReference Include="Microsoft.VSSDK.VsixSignTool" Version="16.2.29116.78"/>
+		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.13.2126" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.VSSDK.VsixSignTool" Version="17.10.34916.79" />
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -46,31 +46,27 @@
 		<StartArguments>/rootsuffix $(VSSDKTargetPlatformRegRootSuffix)</StartArguments>
 	</PropertyGroup>
 
-	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets"/>
+	<Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
 
-	<Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="Exists('$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets')"/>
+	<Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="Exists('$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets')" />
 
 	<ItemGroup>
-		<ProjectReference Include="..\NullGC.Analyzer\NullGC.Analyzer.csproj"/>
+		<ProjectReference Include="..\NullGC.Analyzer\NullGC.Analyzer.csproj" />
 		<ProjectReference Include="..\NullGC.Analyzer.CodeFixes\NullGC.Analyzer.CodeFixes.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<!-- https://github.com/dotnet/sdk/issues/433 -->
-		<ProjectReference Update="@(ProjectReference)" AdditionalProperties="TargetFramework=netstandard2.0"/>
+		<ProjectReference Update="@(ProjectReference)" AdditionalProperties="TargetFramework=netstandard2.0" />
 
 		<!-- https://github.com/Microsoft/extendvs/issues/57 -->
-		<ProjectReference Update="@(ProjectReference)" Name="%(Filename)"/>
+		<ProjectReference Update="@(ProjectReference)" Name="%(Filename)" />
 	</ItemGroup>
 
 	<!--https://stackoverflow.com/a/24328739-->
 	<Target Name="UpdateVersionInVsixManifest" BeforeTargets="PrepareForBuild" Condition="$(Version) != ''">
-		<Message Text="Updating VSIX Version"/>
-		<XmlPoke
-                XmlInputPath="source.extension.vsixmanifest"
-                Query="/n:PackageManifest/n:Metadata/n:Identity/@Version"
-                Value="$(Version)"
-                Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/developer/vsx-schema/2011' Name='DoNotKnowWhatThisIsFor-ButItIsRequired' /&gt;">
+		<Message Text="Updating VSIX Version" />
+		<XmlPoke XmlInputPath="source.extension.vsixmanifest" Query="/n:PackageManifest/n:Metadata/n:Identity/@Version" Value="$(Version)" Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/developer/vsx-schema/2011' Name='DoNotKnowWhatThisIsFor-ButItIsRequired' /&gt;">
 		</XmlPoke>
 	</Target>
 </Project>

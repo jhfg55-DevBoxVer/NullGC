@@ -1,20 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Configurations>Debug;Release</Configurations>
-        <Platforms>AnyCPU;x64;x86</Platforms>
+        <Platforms>AnyCPU;x64;x86;arm;arm64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\NullGC.Abstractions\NullGC.Abstractions.csproj"/>
-        <ProjectReference Include="..\NullGC.Allocators\NullGC.Allocators.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="xunit" Version="2.6.6" />
+        <ProjectReference Include="..\NullGC.Abstractions\NullGC.Abstractions.csproj" />
+        <ProjectReference Include="..\NullGC.Allocators\NullGC.Allocators.csproj" />
     </ItemGroup>
 
 </Project>
