@@ -137,7 +137,7 @@ public static class OrderBy
 // {
 //     private TPrevious _previous;
 //     private ValueArray<int> _indexBuffer;
-//     private ValueList<T> _valueBuffer;
+//     private UList<T> _valueBuffer;
 //     private EnumerableSorter<T, T, TKey, TKeySel, TComparer> _sorter;
 //     private int _index;
 //
@@ -171,7 +171,7 @@ public static class OrderBy
 //     [MethodImpl(MethodImplOptions.AggressiveInlining)]
 //     private void BuildBuffer()
 //     {
-//         _valueBuffer = new ValueList<T>(_previous.MaxCount ?? 0);
+//         _valueBuffer = new UList<T>(_previous.MaxCount ?? 0);
 //
 //         while (_previous.MoveNext())
 //         {
@@ -245,7 +245,7 @@ public struct OrderByRefToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNext
 {
     private TPrevious _previous;
     private ValueArray<int> _indexBuffer;
-    private ValueList<T> _valueBuffer;
+    private UList<T> _valueBuffer;
     private ValueEnumerableSorter<T, TKey, TKeySel, TComparer, TNext> _sorter;
     private int _minIndex = int.MinValue;
     private int _maxIndex = int.MinValue;
@@ -298,7 +298,7 @@ public struct OrderByRefToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNext
 
     private void BuildBuffer()
     {
-        _valueBuffer = new ValueList<T>(_previous.MaxCount ?? 0);
+        _valueBuffer = new UList<T>(_previous.MaxCount ?? 0);
 
         while (_previous.MoveNext())
         {
@@ -388,7 +388,7 @@ public struct OrderByValueToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNe
 {
     private TPrevious _previous;
     private ValueArray<int> _indexBuffer;
-    private ValueList<T> _valueBuffer;
+    private UList<T> _valueBuffer;
     private ValueEnumerableSorter<T, TKey, TKeySel, TComparer, TNext> _sorter;
     private int _minIndex = int.MinValue;
     private int _maxIndex = int.MinValue;
@@ -441,7 +441,7 @@ public struct OrderByValueToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNe
 
     private void BuildBuffer()
     {
-        _valueBuffer = new ValueList<T>(_previous.MaxCount ?? 0);
+        _valueBuffer = new UList<T>(_previous.MaxCount ?? 0);
 
         while (_previous.MoveNext())
         {
@@ -522,7 +522,7 @@ public struct OrderByValueToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNe
 // {
 //     private TPrevious _previous;
 //     private ValueArray<int> _indexBuffer;
-//     private ValueList<T> _valueBuffer;
+//     private UList<T> _valueBuffer;
 //     private EnumerableSorter<T, T, TKey, TKeySel, TComparer> _sorter;
 //     private int _index;
 //
@@ -547,7 +547,7 @@ public struct OrderByValueToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNe
 //     [MethodImpl(MethodImplOptions.AggressiveInlining)]
 //     private void BuildBuffer()
 //     {
-//         _valueBuffer = new ValueList<T>(_previous.MaxCount ?? 0);
+//         _valueBuffer = new UList<T>(_previous.MaxCount ?? 0);
 //
 //         while (_previous.MoveNext())
 //         {
@@ -599,7 +599,7 @@ public struct OrderByValueToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNe
 // {
 //     private TPrevious _previous;
 //     private ValueArray<int> _indexBuffer;
-//     private ValueList<Ptr<T>> _valueBuffer;
+//     private UList<Ptr<T>> _valueBuffer;
 //     private EnumerableSorter<Ptr<T>, T, TKey, TKeySel, TComparer> _sorter;
 //
 //     private int _index;
@@ -631,7 +631,7 @@ public struct OrderByValueToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, TNe
 //     [MethodImpl(MethodImplOptions.NoInlining)]
 //     private void BuildBuffer()
 //     {
-//         _valueBuffer = new ValueList<Ptr<T>>(_previous.MaxCount ?? 0);
+//         _valueBuffer = new UList<Ptr<T>>(_previous.MaxCount ?? 0);
 //
 //         while (_previous.MoveNext())
 //         {
@@ -707,7 +707,7 @@ public struct OrderByPtrToPtr<T, TPrevious, TKeySel, TKey, TComparer, TNext> : I
     where TKeySel : struct
 {
     private TPrevious _previous;
-    private ValueList<Ptr<T>> _valueBuffer;
+    private UList<Ptr<T>> _valueBuffer;
     private ValueArray<int> _indexBuffer;
     private ValueEnumerableSorter<T, TKey, TKeySel, TComparer, TNext> _sorter;
     private int _minIndex = int.MinValue;
@@ -781,7 +781,7 @@ public struct OrderByPtrToPtr<T, TPrevious, TKeySel, TKey, TComparer, TNext> : I
 
     private void BuildBuffer()
     {
-        _valueBuffer = new ValueList<Ptr<T>>(_previous.MaxCount ?? 0);
+        _valueBuffer = new UList<Ptr<T>>(_previous.MaxCount ?? 0);
 
         while (_previous.MoveNext())
         {
@@ -868,7 +868,7 @@ public struct OrderByFixedRefToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, 
 {
     private TPrevious _previous;
     private ValueArray<int> _indexBuffer;
-    private ValueList<Ptr<T>> _valueBuffer;
+    private UList<Ptr<T>> _valueBuffer;
     private ValueEnumerableSorter<T, TKey, TKeySel, TComparer, TNext> _sorter;
     private int _minIndex = int.MinValue;
     private int _maxIndex = int.MinValue;
@@ -924,7 +924,7 @@ public struct OrderByFixedRefToFixedRef<T, TPrevious, TKeySel, TKey, TComparer, 
 
     private void BuildBuffer()
     {
-        _valueBuffer = new ValueList<Ptr<T>>(_previous.MaxCount ?? 0);
+        _valueBuffer = new UList<Ptr<T>>(_previous.MaxCount ?? 0);
 
         while (_previous.MoveNext())
         {

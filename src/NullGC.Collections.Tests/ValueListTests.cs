@@ -12,9 +12,9 @@ public class ValueListTests : AssertMemoryAllFreedBase
     [Fact]
     public void DefaultListIsEmptyList()
     {
-        ValueList<int> defaultList = default;
+        UList<int> defaultList = default;
         Assert.False(defaultList.IsAllocated);
-        Assert.True(EqualityComparer<ValueList<int>>.Default.Equals(ValueList<int>.Empty, defaultList));
+        Assert.True(EqualityComparer<UList<int>>.Default.Equals(UList<int>.Empty, defaultList));
         Assert.Empty(defaultList);
         foreach (ref var _ in defaultList) Assert.Fail("Should be empty.");
         defaultList.Dispose();
@@ -23,19 +23,19 @@ public class ValueListTests : AssertMemoryAllFreedBase
     [Fact]
     public void SpecificCapacityListCanBeConstructed()
     {
-        var arr = new ValueList<int>(0);
+        var arr = new UList<int>(0);
         arr.Dispose();
-        arr = new ValueList<int>(1);
+        arr = new UList<int>(1);
         arr.Dispose();
-        arr = new ValueList<int>(2);
+        arr = new UList<int>(2);
         arr.Dispose();
-        arr = new ValueList<int>(200);
+        arr = new UList<int>(200);
         arr.Dispose();
-        arr = new ValueList<int>(20000);
+        arr = new UList<int>(20000);
         arr.Dispose();
-        arr = new ValueList<int>(500000);
+        arr = new UList<int>(500000);
         arr.Dispose();
-        arr = new ValueList<int>(50000000);
+        arr = new UList<int>(50000000);
         arr.Dispose();
     }
 
@@ -43,7 +43,7 @@ public class ValueListTests : AssertMemoryAllFreedBase
     public void ValueSetShouldBePreservedOnGrowingList()
     {
         var count = 10_000_000;
-        var arr = new ValueList<int>();
+        var arr = new UList<int>();
         for (var i = 0; i < count; i++) arr.Add(i);
 
         for (var i = 0; i < count; i++) Assert.Equal(arr[i], i);
@@ -54,7 +54,7 @@ public class ValueListTests : AssertMemoryAllFreedBase
     [Fact]
     public void IndexOfAndContainsFacts()
     {
-        var list = new ValueList<int>(100);
+        var list = new UList<int>(100);
         for (var i = 0; i < list.Capacity; i++) list.Add(i);
         for (var i = 0; i < list.Count; i++) Assert.Equal(i, list.IndexOf(i));
 

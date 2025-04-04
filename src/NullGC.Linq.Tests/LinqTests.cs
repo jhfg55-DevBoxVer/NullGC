@@ -18,12 +18,12 @@ public class LinqTests : AssertMemoryAllFreedBase
     private SmallStruct<int, float>[] _smallStructArr;
     private ValueArray<SmallStruct<int, float>> _smallStructValArr;
     private ValueArray<int> _valIntArr;
-    private ValueList<int> _valList1;
+    private UList<int> _valList1;
 
     public LinqTests(ITestOutputHelper logger) : base(logger, false)
     {
         _emptyArray = ValueArray<int>.Empty;
-        _valList1 = new ValueList<int>(0) {7, 0, 4, 5, 6, 1, 2, 3, 8, 9};
+        _valList1 = new UList<int>(0) {7, 0, 4, 5, 6, 1, 2, 3, 8, 9};
         _intArr = new int[_count];
         _valIntArr = new ValueArray<int>(_count);
         _bigStructArr = new BigStruct<int, float>[_count];

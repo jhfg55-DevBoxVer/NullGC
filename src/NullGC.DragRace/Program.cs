@@ -16,7 +16,7 @@ BenchmarkRunner.Run(
 return;
 #else
 
-var lst = new ValueList<int>();
+var lst = new UList<int>();
 var i = lst.LinqRef().Where(x => x > 1).First();
 
 var types = args.Select(Type.GetType).Where(x => x is not null).ToArray();

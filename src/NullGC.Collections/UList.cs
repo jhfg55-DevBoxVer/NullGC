@@ -13,36 +13,36 @@ namespace NullGC.Collections;
 
 // modified from the code of .NET Core List<>.
 [DebuggerDisplay("Count = {Count}, IsAllocated = {IsAllocated}")]
-public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IUnmanagedArray<T>, IList<T>,
+public struct UList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IUnmanagedArray<T>, IList<T>,
     IReadOnlyList<T>,
-    IExplicitOwnership<ValueList<T>> where T : unmanaged
+    IExplicitOwnership<UList<T>> where T : unmanaged
 {
     private const int DefaultCapacity = 4;
     private ValueArray<T> _items;
     private int _size;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private ValueList(ValueArray<T> items, int size)
+    private UList(ValueArray<T> items, int size)
     {
         _items = items;
         _size = size;
     }
 
-    public ValueList() : this(0, (int) AllocatorTypes.Default)
+    public UList() : this(0, (int) AllocatorTypes.Default)
     {
     }
 
-    public ValueList(AllocatorTypes allocatorProviderId = AllocatorTypes.Default)
+    public UList(AllocatorTypes allocatorProviderId = AllocatorTypes.Default)
     {
         _items = new ValueArray<T>(0, allocatorProviderId);
     }
 
-    public ValueList(int capacity, AllocatorTypes allocatorProviderId) :
+    public UList(int capacity, AllocatorTypes allocatorProviderId) :
         this(capacity, (int) allocatorProviderId)
     {
     }
 
-    public ValueList(int capacity, int allocatorProviderId = (int) AllocatorTypes.Default)
+    public UList(int capacity, int allocatorProviderId = (int) AllocatorTypes.Default)
     {
         Guard.IsGreaterThanOrEqualTo(capacity, 0, nameof(capacity));
 
@@ -51,12 +51,12 @@ public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IU
             : new ValueArray<T>(capacity, allocatorProviderId, true);
     }
 
-    public ValueList(IEnumerable<T> collection, AllocatorTypes allocatorProviderId) :
+    public UList(IEnumerable<T> collection, AllocatorTypes allocatorProviderId) :
         this(collection, (int) allocatorProviderId)
     {
     }
 
-    public ValueList(IEnumerable<T> collection, int allocatorProviderId = (int) AllocatorTypes.Default)
+    public UList(IEnumerable<T> collection, int allocatorProviderId = (int) AllocatorTypes.Default)
     {
         // ReSharper disable once PossibleMultipleEnumeration
         Guard.IsNotNull(collection, nameof(collection));
@@ -248,11 +248,11 @@ public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IU
         return _size != 0 && IndexOf(item) >= 0;
     }
 
-    public ValueList<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter) where TOutput : unmanaged
+    public UList<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter) where TOutput : unmanaged
     {
         if (converter == null) ThrowHelper.ThrowArgumentNullException(nameof(converter));
 
-        var list = new ValueList<TOutput>(_size);
+        var list = new UList<TOutput>(_size);
         for (var i = 0; i < _size; i++) list._items.GetRefUnchecked(i) = converter(_items.GetUnchecked(i));
 
         list._size = _size;
@@ -318,11 +318,11 @@ public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IU
         return default;
     }
 
-    public ValueList<T> FindAll(Predicate<T> match)
+    public UList<T> FindAll(Predicate<T> match)
     {
         if (match == null) ThrowHelper.ThrowArgumentNullException(nameof(match));
 
-        var list = new ValueList<T>();
+        var list = new UList<T>();
         for (var i = 0; i < _size; i++)
             if (match(_items.GetUnchecked(i)))
                 list.Add(_items.GetUnchecked(i));
@@ -411,13 +411,13 @@ public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IU
         }
     }
 
-    // public readonly ValueList<T> GetRange(int index, int count)
+    // public readonly UList<T> GetRange(int index, int count)
     // {
     //     Guard.IsGreaterThanOrEqualTo(index, 0, nameof(index));
     //     Guard.IsGreaterThanOrEqualTo(count, 0, nameof(count));
     //     Guard.IsLessThanOrEqualTo(count, _size - index, nameof(count));
     //
-    //     var list = new ValueList<T>(count, _items.AllocatorProviderId);
+    //     var list = new UList<T>(count, _items.AllocatorProviderId);
     //     ValueArray.Copy(_items, index, list._items, 0, count);
     //     list._size = count;
     //     return list;
@@ -644,14 +644,14 @@ public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IU
         return true;
     }
 
-    public ValueList<T> Borrow()
+    public UList<T> Borrow()
     {
-        return new ValueList<T>(_items.Borrow(), _size);
+        return new UList<T>(_items.Borrow(), _size);
     }
 
-    public ValueList<T> Take()
+    public UList<T> Take()
     {
-        return new ValueList<T>(_items.Take(), _size);
+        return new UList<T>(_items.Take(), _size);
     }
 
     public void Dispose()
@@ -673,7 +673,7 @@ public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IU
     readonly int IUnmanagedArray<T>.Length => _size;
     public readonly bool IsAllocated => _items.IsAllocated;
 
-    public static readonly ValueList<T> Empty = default;
+    public static readonly UList<T> Empty = default;
     readonly int? IMaybeCountable.Count => Count;
 
     /// <summary>
