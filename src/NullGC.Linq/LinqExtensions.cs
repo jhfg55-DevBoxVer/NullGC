@@ -10,31 +10,31 @@ public static partial class LinqExtensions
     // and possibly expensive (long operator chain). While ref can be used, the extra indirection is also unnecessary. 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToList<T, TEnumerator>(this LinqFixedRefEnumerable<T, TEnumerator> src)
+    public static ValueList<T> ToList<T, TEnumerator>(this LinqFixedRefEnumerable<T, TEnumerator> src)
         where TEnumerator : struct, ILinqRefEnumerator<T>, IAddressFixed where T : unmanaged
     {
         using var enumerator = src.GetEnumerator();
-        var ret = new UList<T>(enumerator.MaxCount ?? 0);
+        var ret = new ValueList<T>(enumerator.MaxCount ?? 0);
         while (enumerator.MoveNext()) ret.Add(enumerator.Current);
         return ret;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToList<T, TEnumerator>(this LinqRefEnumerable<T, TEnumerator> src)
+    public static ValueList<T> ToList<T, TEnumerator>(this LinqRefEnumerable<T, TEnumerator> src)
         where TEnumerator : struct, ILinqRefEnumerator<T> where T : unmanaged
     {
         using var enumerator = src.GetEnumerator();
-        var ret = new UList<T>(enumerator.MaxCount ?? 0);
+        var ret = new ValueList<T>(enumerator.MaxCount ?? 0);
         while (enumerator.MoveNext()) ret.Add(enumerator.Current);
         return ret;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToList<T, TEnumerator>(this LinqValueEnumerable<T, TEnumerator> src)
+    public static ValueList<T> ToList<T, TEnumerator>(this LinqValueEnumerable<T, TEnumerator> src)
         where TEnumerator : struct, ILinqValueEnumerator<T> where T : unmanaged
     {
         using var enumerator = src.GetEnumerator();
-        var ret = new UList<T>(enumerator.MaxCount ?? 0);
+        var ret = new ValueList<T>(enumerator.MaxCount ?? 0);
         while (enumerator.MoveNext()) ret.Add(enumerator.Current);
         return ret;
     }
@@ -193,7 +193,7 @@ public static partial class LinqExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LinqFixedRefEnumerable<T, UnmanagedArrayEnumerator<T>> LinqRef<T>([ReadOnly] this UList<T> src)
+    public static LinqFixedRefEnumerable<T, UnmanagedArrayEnumerator<T>> LinqRef<T>([ReadOnly] this ValueList<T> src)
         where T : unmanaged
     {
         return new LinqFixedRefEnumerable<T, UnmanagedArrayEnumerator<T>>(src.GetEnumerator());
@@ -222,14 +222,14 @@ public static partial class LinqExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LinqValueEnumerable<T, UnmanagedArrayEnumerator<T>> LinqValue<T>([ReadOnly] this UList<T> src)
+    public static LinqValueEnumerable<T, UnmanagedArrayEnumerator<T>> LinqValue<T>([ReadOnly] this ValueList<T> src)
         where T : unmanaged
     {
         return new LinqValueEnumerable<T, UnmanagedArrayEnumerator<T>>(src.GetEnumerator());
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static LinqPtrEnumerable<T, UnmanagedArrayEnumerator<T>> LinqPtr<T>([ReadOnly] this UList<T> src)
+    public static LinqPtrEnumerable<T, UnmanagedArrayEnumerator<T>> LinqPtr<T>([ReadOnly] this ValueList<T> src)
         where T : unmanaged
     {
         return new LinqPtrEnumerable<T, UnmanagedArrayEnumerator<T>>(src.GetEnumerator());

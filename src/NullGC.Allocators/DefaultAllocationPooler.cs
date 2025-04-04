@@ -426,7 +426,7 @@ public class DefaultAllocationPooler : IMemoryAllocator, IMemoryAllocationTracka
         private readonly int _maxTtlAdaptStepMs;
 
         // TODO Use Deque instead
-        public UList<PoolItem> Allocations = new(8, (int) AllocatorTypes.DefaultUncachedUnscoped);
+        public ValueList<PoolItem> Allocations = new(8, (int) AllocatorTypes.DefaultUncachedUnscoped);
         private SlidingWindow<int> _cacheLostObserver;
 
         public int HeadInLruList = -1;

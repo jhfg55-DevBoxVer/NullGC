@@ -8,16 +8,16 @@ namespace NullGC.Analyzer.Tests.Project;
 
 public static class Program
 {
-    private static UList<int> _list;
+    private static ValueList<int> _list;
     private static int _key;
-    private static UList<int> _list2;
+    private static ValueList<int> _list2;
 
     public static void Main(string[] args)
     {
         AllocatorContext.SetImplementation(new DefaultAllocatorContextImpl());
         AllocatorContext.Impl.ConfigureDefault();
-        _list = new UList<int>(AllocatorTypes.DefaultUnscoped) {1, 2, 3, 4, 5, 6};
-        _list2 = new UList<int>(AllocatorTypes.DefaultUnscoped) {1};
+        _list = new ValueList<int>(AllocatorTypes.DefaultUnscoped) {1, 2, 3, 4, 5, 6};
+        _list2 = new ValueList<int>(AllocatorTypes.DefaultUnscoped) {1};
         UseValueList(_list); // should borrow
 
         var stA = new StructA(_list);
@@ -29,8 +29,8 @@ public static class Program
         Console.WriteLine(stA.PartiallyExplicit); // partially explicit
         Console.WriteLine(stA.BorrowNoAttribute()); // should have attribute
 
-        // ref UList<int> localList = ref _list2;
-        UList<int> localList = default;
+        // ref ValueList<int> localList = ref _list2;
+        ValueList<int> localList = default;
         stA.RefParamMethod(ref localList);
         if (localList.SequenceEqual(new[] {1})) throw new InvalidOperationException();
         if (!localList.SequenceEqual(new[] {1, 2, 3, 4, 5, 6})) throw new InvalidOperationException();
@@ -40,7 +40,7 @@ public static class Program
         _list.Dispose();
     }
 
-    private static void UseValueList(UList<int> lst)
+    private static void UseValueList(ValueList<int> lst)
     {
         _key = lst.LinqRef().GroupBy(x => x).First().Key; // GroupBy not implemented
         lst.LinqRef().WorkOnIEnumerable(); // GroupBy not implemented
@@ -59,15 +59,15 @@ internal static class Extensions
 struct StructA : IExplicitOwnership<StructA>
 {
     private bool flag;
-    private UList<int> _list;
-    public UList<int> NoBorrowList => _list;
+    private ValueList<int> _list;
+    public ValueList<int> NoBorrowList => _list;
 
-    public UList<int> BorrowList
+    public ValueList<int> BorrowList
     {
         get { return _list.Borrow(); }
     }
 
-    public UList<int> PartiallyExplicit
+    public ValueList<int> PartiallyExplicit
     {
         get
         {
@@ -78,20 +78,20 @@ struct StructA : IExplicitOwnership<StructA>
         }
     }
 
-    public StructA(UList<int> list)
+    public StructA(ValueList<int> list)
     {
         _list = list;
     }
 
     // [UnscopedRef]
-    // public void RefAssignRefParamMethod(ref UList<int> refParam)
+    // public void RefAssignRefParamMethod(ref ValueList<int> refParam)
     // {
     //     if (Unsafe.IsNullRef(ref _list)) throw new InvalidOperationException();
     //     if (!_list.SequenceEqual(new []{1,2,3,4,5,6})) throw new InvalidOperationException();
     //     refParam = ref _list;
     // }
 
-    public void RefParamMethod(ref UList<int> refParam)
+    public void RefParamMethod(ref ValueList<int> refParam)
     {
         refParam = _list;
     }

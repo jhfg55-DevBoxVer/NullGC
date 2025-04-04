@@ -17,14 +17,14 @@ public static class ValueCollectionExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<TKey> ToValueList<TKey, TValue>(this ValueDictionary<TKey, TValue>.KeyCollection collection,
+    public static ValueList<TKey> ToValueList<TKey, TValue>(this ValueDictionary<TKey, TValue>.KeyCollection collection,
         int allocatorProviderId = (int) AllocatorTypes.Default) where TKey : unmanaged where TValue : unmanaged
     {
         return ToValueList<TKey, ValueDictionary<TKey, TValue>.KeyCollection>(collection, allocatorProviderId);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<TValue> ToValueList<TKey, TValue>(
+    public static ValueList<TValue> ToValueList<TKey, TValue>(
         this ValueDictionary<TKey, TValue>.ValueCollection collection,
         int allocatorProviderId = (int) AllocatorTypes.Default) where TKey : unmanaged where TValue : unmanaged
     {
@@ -32,7 +32,7 @@ public static class ValueCollectionExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToValueList<T, TEnumerator>(this LinqRefEnumerable<T, TEnumerator> collection,
+    public static ValueList<T> ToValueList<T, TEnumerator>(this LinqRefEnumerable<T, TEnumerator> collection,
         int allocatorProviderId = (int) AllocatorTypes.Default)
         where T : unmanaged where TEnumerator : struct, ILinqRefEnumerator<T>
     {
@@ -40,7 +40,7 @@ public static class ValueCollectionExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToValueList<T, TEnumerator>(this LinqValueEnumerable<T, TEnumerator> collection,
+    public static ValueList<T> ToValueList<T, TEnumerator>(this LinqValueEnumerable<T, TEnumerator> collection,
         int allocatorProviderId = (int) AllocatorTypes.Default)
         where T : unmanaged where TEnumerator : struct, ILinqValueEnumerator<T>
     {
@@ -81,7 +81,7 @@ public static class ValueCollectionExtensions
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToValueList<T, TCollection, TEnumerator>(this TCollection collection,
+    public static ValueList<T> ToValueList<T, TCollection, TEnumerator>(this TCollection collection,
         int allocatorProviderId = (int) AllocatorTypes.Default)
         where T : unmanaged where TCollection : ILinqEnumerable<T, TEnumerator> where TEnumerator : struct, ILinqEnumerator<T>
     {
@@ -103,7 +103,7 @@ public static class ValueCollectionExtensions
             }
         }
 
-        var ret = new UList<T>(count, allocatorProviderId);
+        var ret = new ValueList<T>(count, allocatorProviderId);
 
         using (var e = collection.GetEnumerator())
         {
@@ -127,7 +127,7 @@ public static class ValueCollectionExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToValueList<T, TCollection>(this TCollection collection,
+    public static ValueList<T> ToValueList<T, TCollection>(this TCollection collection,
         int allocatorProviderId = (int) AllocatorTypes.Default)
         where T : unmanaged where TCollection : IEnumerable<T>
     {
@@ -149,7 +149,7 @@ public static class ValueCollectionExtensions
             }
         }
 
-        var ret = new UList<T>(count, allocatorProviderId);
+        var ret = new ValueList<T>(count, allocatorProviderId);
 
         foreach (var item in collection)
         {

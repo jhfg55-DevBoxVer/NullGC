@@ -1,5 +1,3 @@
-global using Xunit;
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
-[assembly: TestCaseOrderer("Xunit.Extensions.Ordering.TestCaseOrderer", "Xunit.Extensions.Ordering")]
-[assembly: TestCollectionOrderer("Xunit.Extensions.Ordering.CollectionOrderer", "Xunit.Extensions.Ordering")]
+[assembly: DisableParallelization]

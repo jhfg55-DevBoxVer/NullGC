@@ -16,7 +16,7 @@ public class Allocator_IntListGrowingBenchmarks : BenchmarkBase
     
     private List<int> _intList = null!;
     // ReSharper disable once CollectionNeverQueried.Local
-    private UList<int> _valIntList;
+    private ValueList<int> _valIntList;
     private int _count = 300_000_000;
 
     [GlobalSetup]
@@ -28,7 +28,7 @@ public class Allocator_IntListGrowingBenchmarks : BenchmarkBase
     [IterationSetup]
     public void IterationSetup()
     {
-        _valIntList = new UList<int>();
+        _valIntList = new ValueList<int>();
         _intList = new List<int>();
     }
 

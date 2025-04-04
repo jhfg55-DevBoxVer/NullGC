@@ -8,17 +8,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\NullGC.Abstractions\NullGC.Abstractions.csproj"/>
-        <ProjectReference Include="..\NullGC.Allocators\NullGC.Allocators.csproj"/>
-        <ProjectReference Include="..\NullGC.Analyzer.CodeFixes\NullGC.Analyzer.CodeFixes.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
-        <ProjectReference Include="..\NullGC.Analyzer\NullGC.Analyzer.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
-        <ProjectReference Include="..\NullGC.Collections\NullGC.Collections.csproj"/>
-        <ProjectReference Include="..\NullGC.Linq\NullGC.Linq.csproj"/>
+      <PackageReference Include="MSTest.TestAdapter" Version="3.8.3" />
+      <PackageReference Include="MSTest.TestFramework" Version="3.8.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <!--<ProjectReference Include="..\NullGC.Analyzer.Package\NullGC.Analyzer.Package.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />-->
-        <!--<ProjectReference Include="..\NullGC.Analyzer.CodeFixes\NullGC.Analyzer.CodeFixes.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />-->
-        <!--<ProjectReference Include="..\NullGC.Analyzer\NullGC.Analyzer.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />-->
+        <ProjectReference Include="..\NullGC.Abstractions\NullGC.Abstractions.csproj" />
+        <ProjectReference Include="..\NullGC.Allocators\NullGC.Allocators.csproj" />
+        <ProjectReference Include="..\NullGC.Analyzer.CodeFixes\NullGC.Analyzer.CodeFixes.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\NullGC.Analyzer\NullGC.Analyzer.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\NullGC.Collections\NullGC.Collections.csproj" />
+        <ProjectReference Include="..\NullGC.Linq\NullGC.Linq.csproj" />
     </ItemGroup>
 </Project>

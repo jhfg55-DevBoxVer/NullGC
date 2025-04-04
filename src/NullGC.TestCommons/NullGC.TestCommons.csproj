@@ -9,6 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="MSTest.TestAdapter" Version="3.8.3" />
+      <PackageReference Include="MSTest.TestFramework" Version="3.8.3" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\NullGC.Abstractions\NullGC.Abstractions.csproj" />
         <ProjectReference Include="..\NullGC.Allocators\NullGC.Allocators.csproj" />
     </ItemGroup>

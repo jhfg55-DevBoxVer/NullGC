@@ -46,39 +46,39 @@ public static class IUnsafeArrayExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Span<T> AsSpan<T>(this UList<T> src) where T : unmanaged
+    public static Span<T> AsSpan<T>(this ValueList<T> src) where T : unmanaged
     {
-        return src.AsSpan<T, UList<T>>();
+        return src.AsSpan<T, ValueList<T>>();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Span<T> AsSpan<T>(this UList<T> src, int index) where T : unmanaged
+    public static Span<T> AsSpan<T>(this ValueList<T> src, int index) where T : unmanaged
     {
-        return src.AsSpan<T, UList<T>>(index);
+        return src.AsSpan<T, ValueList<T>>(index);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Span<T> AsSpan<T>(this UList<T> src, int index, int count) where T : unmanaged
+    public static Span<T> AsSpan<T>(this ValueList<T> src, int index, int count) where T : unmanaged
     {
-        return src.AsSpan<T, UList<T>>(index, count);
+        return src.AsSpan<T, ValueList<T>>(index, count);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ReadOnlySpan<T> AsReadOnlySpan<T>(this UList<T> src) where T : unmanaged
+    public static ReadOnlySpan<T> AsReadOnlySpan<T>(this ValueList<T> src) where T : unmanaged
     {
-        return src.AsReadOnlySpan<T, UList<T>>();
+        return src.AsReadOnlySpan<T, ValueList<T>>();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ReadOnlySpan<T> AsReadOnlySpan<T>(this UList<T> src, int index) where T : unmanaged
+    public static ReadOnlySpan<T> AsReadOnlySpan<T>(this ValueList<T> src, int index) where T : unmanaged
     {
-        return src.AsReadOnlySpan<T, UList<T>>(index);
+        return src.AsReadOnlySpan<T, ValueList<T>>(index);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ReadOnlySpan<T> AsReadOnlySpan<T>(this UList<T> src, int index, int count) where T : unmanaged
+    public static ReadOnlySpan<T> AsReadOnlySpan<T>(this ValueList<T> src, int index, int count) where T : unmanaged
     {
-        return src.AsReadOnlySpan<T, UList<T>>(index, count);
+        return src.AsReadOnlySpan<T, ValueList<T>>(index, count);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -244,9 +244,9 @@ public static class IUnsafeArrayExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clear<T>(this UList<T> src) where T : unmanaged
+    public static void Clear<T>(this ValueList<T> src) where T : unmanaged
     {
-        Clear<T, UList<T>>(src);
+        Clear<T, ValueList<T>>(src);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -256,9 +256,9 @@ public static class IUnsafeArrayExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Clear<T>(this UList<T> src, int index, int count) where T : unmanaged
+    public static void Clear<T>(this ValueList<T> src, int index, int count) where T : unmanaged
     {
-        Clear<T, UList<T>>(src, index, count);
+        Clear<T, ValueList<T>>(src, index, count);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -279,24 +279,24 @@ public static class IUnsafeArrayExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToValueList<T, TCollection>(this TCollection src,
+    public static ValueList<T> ToValueList<T, TCollection>(this TCollection src,
         int allocatorProviderId = (int) AllocatorTypes.Default)
         where TCollection : IUnmanagedArray<T> where T : unmanaged
     {
-        var ret = new UList<T>(src.Length, allocatorProviderId);
-        src.CopyTo<T, TCollection, UList<T>>(ret);
+        var ret = new ValueList<T>(src.Length, allocatorProviderId);
+        src.CopyTo<T, TCollection, ValueList<T>>(ret);
         return ret;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToValueList<T>(this UList<T> src,
+    public static ValueList<T> ToValueList<T>(this ValueList<T> src,
         int allocatorProviderId = (int) AllocatorTypes.Default) where T : unmanaged
     {
-        return ToValueList<T, UList<T>>(src, allocatorProviderId);
+        return ToValueList<T, ValueList<T>>(src, allocatorProviderId);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UList<T> ToValueList<T>(this ValueArray<T> src,
+    public static ValueList<T> ToValueList<T>(this ValueArray<T> src,
         int allocatorProviderId = (int) AllocatorTypes.Default) where T : unmanaged
     {
         return ToValueList<T, ValueArray<T>>(src, allocatorProviderId);
@@ -321,11 +321,11 @@ public static class IUnsafeArrayExtensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ValueArray<T> ToValueArray<T>(this UList<T> src,
+    public static ValueArray<T> ToValueArray<T>(this ValueList<T> src,
         int allocatorProviderId = (int) AllocatorTypes.Default)
         where T : unmanaged
     {
-        return ToValueArray<T, UList<T>>(src, allocatorProviderId);
+        return ToValueArray<T, ValueList<T>>(src, allocatorProviderId);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -337,9 +337,9 @@ public static class IUnsafeArrayExtensions
         {
             return ToValueArray<T, ValueArray<T>>((ValueArray<T>) src, allocatorProviderId);
         }
-        else if (src.GetType().IsAssignableTo(typeof(UList<T>)))
+        else if (src.GetType().IsAssignableTo(typeof(ValueList<T>)))
         {
-            return ToValueArray<T, UList<T>>((UList<T>) src, allocatorProviderId);
+            return ToValueArray<T, ValueList<T>>((ValueList<T>) src, allocatorProviderId);
         }
         else if (src.GetType().IsAssignableTo(typeof(ValueStack<T>)))
         {
@@ -362,7 +362,7 @@ public static class IUnsafeArrayExtensions
             if (mc.HasValue) count = mc.Value;
         }
 
-        var ret = new UList<T>(count, allocatorProviderId);
+        var ret = new ValueList<T>(count, allocatorProviderId);
         foreach (var item in src) ret.Add(item);
 
         if (ret.TryConvertSelfToArray(out var arr)) return arr;
