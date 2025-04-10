@@ -1,133 +1,126 @@
-﻿using NullGC.TestCommons;
-using Xunit.Abstractions;
+﻿using System;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NullGC.TestCommons;
 
-namespace NullGC.Collections.Tests;
-
-public class ValueFixedSizeDequeTests : AssertMemoryAllFreedBase
+namespace NullGC.Collections.Tests
 {
-    [Fact]
-    public void ZeroCapacityQueue()
+    [TestClass]
+    public class ValueFixedSizeDequeTests : AssertMemoryAllFreedBase
     {
-        var q = new ValueFixedSizeDeque<int>();
-        Assert.Equal(0, q.Capacity);
-        Assert.Empty(q);
-        Assert.True(q.IsEmpty);
-        Assert.True(q.IsFull);
-    }
+        public static TestContext SharedTestContext { get; set; }
+        public TestContext TestContext { get; set; }
 
-    [Fact]
-    public void EmptyQueue()
-    {
-        var q = new ValueFixedSizeDeque<int>(5);
-        Assert.Empty(q);
-        Assert.True(q.IsEmpty);
-        Assert.False(q.IsFull);
-        AssertEx.Throws<InvalidOperationException, ValueFixedSizeDeque<int>>((ref ValueFixedSizeDeque<int> x) =>
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
         {
-            var _ = x.HeadRef;
-        }, ref q);
-        AssertEx.Throws<InvalidOperationException, ValueFixedSizeDeque<int>>((ref ValueFixedSizeDeque<int> x) =>
+            SharedTestContext = context;
+        }
+
+        public ValueFixedSizeDequeTests()
+            : base(new MSTestOutputHelper(SharedTestContext), false)
         {
-            var _ = x.TailRef;
-        }, ref q);
-        AssertEx.Throws<ArgumentOutOfRangeException, ValueFixedSizeDeque<int>>((ref ValueFixedSizeDeque<int> x) =>
+        }
+
+        [TestMethod]
+        public void ZeroCapacityQueue()
         {
-            var _ = x.GetNthItemRefFromHead(0);
-        }, ref q);
-        AssertEx.Throws<ArgumentOutOfRangeException, ValueFixedSizeDeque<int>>((ref ValueFixedSizeDeque<int> x) =>
+            var q = new ValueFixedSizeDeque<int>();
+            Assert.AreEqual(0, q.Capacity);
+            CollectionAssert.AreEqual(new int[0], q.ToArray());
+            Assert.IsTrue(q.IsEmpty);
+            Assert.IsTrue(q.IsFull);
+        }
+
+        [TestMethod]
+        public void EmptyQueue()
         {
-            var _ = x.GetNthItemRefFromTail(0);
-        }, ref q);
-        AssertEx.Throws<InvalidOperationException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.RemoveFront(out _); }, ref q);
-        AssertEx.Throws<InvalidOperationException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.RemoveBack(out _); }, ref q);
-        q.Dispose();
-    }
+            var q = new ValueFixedSizeDeque<int>(5);
+            CollectionAssert.AreEqual(new int[0], q.ToArray());
+            Assert.IsTrue(q.IsEmpty);
+            Assert.IsFalse(q.IsFull);
+            Assert.ThrowsException<InvalidOperationException>(() => { var _ = q.HeadRef; });
+            Assert.ThrowsException<InvalidOperationException>(() => { var _ = q.TailRef; });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var _ = q.GetNthItemRefFromHead(0); });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var _ = q.GetNthItemRefFromTail(0); });
+            Assert.ThrowsException<InvalidOperationException>(() => { q.RemoveFront(out _); });
+            Assert.ThrowsException<InvalidOperationException>(() => { q.RemoveBack(out _); });
+            q.Dispose();
+        }
 
-    [Fact]
-    public void ThrowOnAddWhenFull()
-    {
-        var q = new ValueFixedSizeDeque<int>(1);
-        q.AddBack(1);
-        AssertEx.Throws<InvalidOperationException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.AddBack(1); }, ref q);
-        AssertEx.Throws<InvalidOperationException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.AddFront(1); }, ref q);
+        [TestMethod]
+        public void ThrowOnAddWhenFull()
+        {
+            var q = new ValueFixedSizeDeque<int>(1);
+            q.AddBack(1);
+            Assert.ThrowsException<InvalidOperationException>(() => { q.AddBack(1); });
+            Assert.ThrowsException<InvalidOperationException>(() => { q.AddFront(1); });
+            q.Dispose();
+        }
 
-        q.Dispose();
-    }
+        [TestMethod]
+        public void CanAddRemovePushFrontBack()
+        {
+            var q = new ValueFixedSizeDeque<int>(5);
+            q.AddBack(1);
+            q.AddBack(2);
+            CollectionAssert.AreEqual(new int[] { 1, 2 }, q.ToArray());
+            q.AddBack(3);
+            q.AddBack(4);
+            q.AddBack(5);
+            CollectionAssert.AreEqual(new int[] { 1, 2, 3, 4, 5 }, q.ToArray());
+            q.RemoveBack(out var e);
+            Assert.AreEqual(5, e);
+            CollectionAssert.AreEqual(new int[] { 1, 2, 3, 4 }, q.ToArray());
+            q.AddBack(6);
+            CollectionAssert.AreEqual(new int[] { 1, 2, 3, 4, 6 }, q.ToArray());
+            q.RemoveFront(out e);
+            Assert.AreEqual(1, e);
+            CollectionAssert.AreEqual(new int[] { 2, 3, 4, 6 }, q.ToArray());
+            q.AddFront(7);
+            CollectionAssert.AreEqual(new int[] { 7, 2, 3, 4, 6 }, q.ToArray());
+            q.PushBack(1, out e);
+            CollectionAssert.AreEqual(new int[] { 2, 3, 4, 6, 1 }, q.ToArray());
+            Assert.AreEqual(7, e);
+            q.PushFront(8, out e);
+            CollectionAssert.AreEqual(new int[] { 8, 2, 3, 4, 6 }, q.ToArray());
+            Assert.AreEqual(1, e);
+            q.PushBack(1, out e);
+            CollectionAssert.AreEqual(new int[] { 2, 3, 4, 6, 1 }, q.ToArray());
+            q.Clear();
+            CollectionAssert.AreEqual(new int[0], q.ToArray());
+            q.PushBack(1, out e);
+            q.PushBack(1, out e);
+            CollectionAssert.AreEqual(new int[] { 1, 1 }, q.ToArray());
 
-    [Fact]
-    public void CanAddRemovePushFrontBack()
-    {
-        var q = new ValueFixedSizeDeque<int>(5);
-        q.AddBack(1);
-        q.AddBack(2);
-        Assert.Equal(new[] {1, 2}, q);
-        q.AddBack(3);
-        q.AddBack(4);
-        q.AddBack(5);
-        Assert.Equal(new[] {1, 2, 3, 4, 5}, q);
-        q.RemoveBack(out var e);
-        Assert.Equal(5, e);
-        Assert.Equal(new[] {1, 2, 3, 4}, q);
-        q.AddBack(6);
-        Assert.Equal(new[] {1, 2, 3, 4, 6}, q);
-        q.RemoveFront(out e);
-        Assert.Equal(1, e);
-        Assert.Equal(new[] {2, 3, 4, 6}, q);
-        q.AddFront(7);
-        Assert.Equal(new[] {7, 2, 3, 4, 6}, q);
-        q.PushBack(1, out e);
-        Assert.Equal(new[] {2, 3, 4, 6, 1}, q);
-        Assert.Equal(7, e);
-        q.PushFront(8, out e);
-        Assert.Equal(new[] {8, 2, 3, 4, 6}, q);
-        Assert.Equal(1, e);
-        q.PushBack(1, out e);
-        Assert.Equal(new[] {2, 3, 4, 6, 1}, q);
-        q.Clear();
-        Assert.Empty(q);
-        q.PushBack(1, out e);
-        q.PushBack(1, out e);
-        Assert.Equal(new[] {1, 1}, q);
+            q.Dispose();
+        }
 
-        q.Dispose();
-    }
+        [TestMethod]
+        public void GetNthFromHeadOrTail()
+        {
+            var q = new ValueFixedSizeDeque<int>(5);
+            q.AddBack(1);
+            Assert.AreEqual(1, q.GetNthItemRefFromHead(0));
+            Assert.AreEqual(1, q.GetNthItemRefFromTail(0));
+            q.AddBack(2);
+            q.AddBack(3);
+            q.AddBack(4);
+            q.AddBack(5);
+            Assert.AreEqual(1, q.GetNthItemRefFromHead(0));
+            Assert.AreEqual(5, q.GetNthItemRefFromTail(0));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var _ = q.GetNthItemRefFromHead(-1); });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var _ = q.GetNthItemRefFromTail(-1); });
+            q.RemoveFront(out _);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var _ = q.GetNthItemRefFromHead(4); });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var _ = q.GetNthItemRefFromTail(4); });
+            q.AddBack(6);
 
-    [Fact]
-    public void GetNthFromHeadOrTail()
-    {
-        var q = new ValueFixedSizeDeque<int>(5);
-        q.AddBack(1);
-        Assert.Equal(1, q.GetNthItemRefFromHead(0));
-        Assert.Equal(1, q.GetNthItemRefFromTail(0));
-        q.AddBack(2);
-        q.AddBack(3);
-        q.AddBack(4);
-        q.AddBack(5);
-        Assert.Equal(1, q.GetNthItemRefFromHead(0));
-        Assert.Equal(5, q.GetNthItemRefFromTail(0));
-        AssertEx.Throws<ArgumentOutOfRangeException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.GetNthItemRefFromHead(-1); }, ref q);
-        AssertEx.Throws<ArgumentOutOfRangeException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.GetNthItemRefFromTail(-1); }, ref q);
-        q.RemoveFront(out _);
-        AssertEx.Throws<ArgumentOutOfRangeException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.GetNthItemRefFromHead(4); }, ref q);
-        AssertEx.Throws<ArgumentOutOfRangeException, ValueFixedSizeDeque<int>>(
-            (ref ValueFixedSizeDeque<int> x) => { x.GetNthItemRefFromTail(4); }, ref q);
-        q.AddBack(6);
+            CollectionAssert.AreEqual(new int[] { 2, 3, 4, 5, 6 }, q.ToArray());
+            Assert.AreEqual(6, q.GetNthItemRefFromHead(4));
+            Assert.AreEqual(2, q.GetNthItemRefFromTail(4));
 
-        Assert.Equal(new[] {2, 3, 4, 5, 6}, q);
-        Assert.Equal(6, q.GetNthItemRefFromHead(4));
-        Assert.Equal(2, q.GetNthItemRefFromTail(4));
-
-        q.Dispose();
-    }
-
-    public ValueFixedSizeDequeTests(ITestOutputHelper logger) : base(logger, false)
-    {
+            q.Dispose();
+        }
     }
 }

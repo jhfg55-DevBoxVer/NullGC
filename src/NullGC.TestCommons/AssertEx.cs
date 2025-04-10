@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Diagnostics;
-using Xunit.Sdk;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace NullGC.TestCommons;
 
@@ -10,14 +11,14 @@ public static class AssertEx
         Guard.IsNotNull(exceptionType);
 
         if (exception == null)
-            throw ThrowsException.ForNoException(exceptionType);
+            Assert.Fail($"Expected exception of type '{exceptionType.FullName}' but no exception was thrown.");
 
         if (exceptionType != exception.GetType())
-            throw ThrowsException.ForIncorrectExceptionType(exceptionType, exception);
+            Assert.Fail($"Expected exception of type '{exceptionType.FullName}', but exception of type '{exception.GetType().FullName}' was thrown.");
 
         return exception;
     }
-    
+
     private static Exception? RecordException<TArg>(ActionT1Ref<TArg> testCode, ref TArg arg)
     {
         Guard.IsNotNull(testCode);
@@ -33,7 +34,6 @@ public static class AssertEx
         }
     }
 
-    
     public static T Throws<T, TArg>(ActionT1Ref<TArg> testCode, ref TArg arg)
         where T : Exception
     {

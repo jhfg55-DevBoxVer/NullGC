@@ -1,12 +1,10 @@
 ﻿using NullGC.Allocators;
 using NullGC.Collections.Extensions;
-using Xunit;
-using Xunit.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NullGC.TestCommons;
 
-[Collection("AllocatorContext")]
-public abstract class AssertMemoryAllFreedBase : TestBase, IDisposable, IClassFixture<DefaultAllocatorContextFixture>
+public abstract class AssertMemoryAllFreedBase : TestBase, IDisposable
 {
     private readonly bool _scoped;
     private readonly IMemoryAllocationTrackable? _memTrackable;
@@ -14,7 +12,8 @@ public abstract class AssertMemoryAllFreedBase : TestBase, IDisposable, IClassFi
 
     protected IMemoryAllocationTrackable? AllocTracker => _allocTrackable;
 
-    protected AssertMemoryAllFreedBase(ITestOutputHelper logger, bool scoped, bool uncached = false) : base(logger)
+    protected AssertMemoryAllFreedBase(ITestOutputHelper logger, bool scoped, bool uncached = false)
+        : base(logger)
     {
         AllocatorContext.ClearProvidersAndAllocations();
 
@@ -24,18 +23,18 @@ public abstract class AssertMemoryAllFreedBase : TestBase, IDisposable, IClassFi
         else if (!uncached)
             AllocatorContextInitializer.SetupDefaultUnscopedAllocationContext(out _allocTrackable, out _memTrackable);
         else
-            AllocatorContextInitializer.SetupDefaultUncachedUnscopedAllocationContext(out _allocTrackable,
-                out _memTrackable);
+            AllocatorContextInitializer.SetupDefaultUncachedUnscopedAllocationContext(out _allocTrackable, out _memTrackable);
     }
 
     public override void Dispose()
     {
         if (_allocTrackable is IAllocatorCacheable c1) c1.ClearCachedMemory();
         if (_allocTrackable is not null)
-            Assert.True(_allocTrackable.ClientIsAllFreed);
+            Assert.IsTrue(_allocTrackable.ClientIsAllFreed);
         if (_allocTrackable is IAllocatorCacheable c2) c2.ClearCachedMemory();
-        if (_scoped) 
-            if (_memTrackable is not null) Assert.True(_memTrackable.IsAllFreed);
+        if (_scoped)
+            if (_memTrackable is not null)
+                Assert.IsTrue(_memTrackable.IsAllFreed);
         AllocatorContext.ClearProvidersAndAllocations();
     }
 }

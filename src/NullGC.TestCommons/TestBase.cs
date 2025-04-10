@@ -1,8 +1,27 @@
-﻿using NullGC.TestCommons.Extensions;
-using Xunit.Abstractions;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace NullGC.TestCommons;
+// 在 TestCommons 命名空间中定义日志辅助接口及适配器，实现 MSTest 模式下的输出
+public interface ITestOutputHelper
+{
+    void WriteLine(string message);
+}
 
+public class MSTestOutputHelper : ITestOutputHelper
+{
+    private readonly TestContext _testContext;
+
+    public MSTestOutputHelper(TestContext testContext)
+    {
+        _testContext = testContext;
+    }
+
+    public void WriteLine(string message)
+    {
+        _testContext.WriteLine(message);
+    }
+}
 public abstract class TestBase : IDisposable
 {
     private readonly ITestOutputHelper _logger;
@@ -10,13 +29,11 @@ public abstract class TestBase : IDisposable
     protected TestBase(ITestOutputHelper logger)
     {
         _logger = logger;
-        if (logger.TryGetITest(out var test)) logger.WriteLine($"Starting test '{test.DisplayName}'");
-        else throw new InvalidOperationException();
+        _logger.WriteLine("Starting test");
     }
 
     public virtual void Dispose()
     {
-        if (_logger.TryGetITest(out var test)) _logger.WriteLine($"Finished test '{test.DisplayName}'");
-        else throw new InvalidOperationException();
+        _logger.WriteLine("Finished test");
     }
 }

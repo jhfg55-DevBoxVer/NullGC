@@ -1,0 +1,34 @@
+在 Rust 的标准库中，`Vec<T>` 的实现位于 `alloc` crate 的 `vec` 模块中。`vec` 文件夹下的其他文件通常是为了支持 `Vec<T>` 的功能，或者提供与 `Vec<T>` 相关的辅助功能。以下是一些常见的文件及其作用（基于 Rust 仓库的结构）：
+
+1. **`mod.rs`**  
+   - 这是 `vec` 模块的主入口文件，定义了 `Vec<T>` 的核心实现。
+   - 包含 `Vec<T>` 的主要逻辑，例如内存分配、扩容、元素操作等。
+
+2. **`drain.rs`**  
+   - 实现了 `Vec<T>` 的 `Drain` 迭代器。
+   - `Drain` 是一个特殊的迭代器，用于在迭代的同时移除 `Vec<T>` 中的元素。
+
+3. **`into_iter.rs`**  
+   - 实现了 `Vec<T>` 的 `IntoIter` 迭代器。
+   - `IntoIter` 是一个所有权迭代器，用于消费 `Vec<T>` 并逐个返回其元素。
+
+4. **`splice.rs`**  
+   - 实现了 `Vec<T>` 的 `Splice` 功能。
+   - `Splice` 允许在 `Vec<T>` 中替换一部分元素，同时返回被替换的元素。
+
+5. **`tests.rs`**  
+   - 包含与 `Vec<T>` 相关的单元测试。
+   - 用于验证 `Vec<T>` 的功能是否正确实现。
+
+6. **`raw_vec.rs`**  
+   - 定义了 `RawVec<T>`，这是 `Vec<T>` 的底层实现。
+   - `RawVec<T>` 负责管理堆内存的分配和释放，是 `Vec<T>` 的核心组件。
+
+7. **`spec_extend.rs`**  
+   - 提供了 `Vec<T>` 的 `SpecExtend` 特化实现。
+   - 用于优化从迭代器扩展 `Vec<T>` 的性能。
+
+### 总结
+这些文件共同构成了 `Vec<T>` 的完整实现，分别负责不同的功能模块。Rust 的模块化设计使得代码更易于维护和扩展，同时也提高了代码的可读性和复用性。
+
+如果你需要更详细的解释，可以直接查看这些文件的源代码：[Rust Vec Module on GitHub](https://github.com/rust-lang/rust/tree/master/library/alloc/src/vec)。

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NullGC.TestCommons;
 
@@ -9,8 +6,17 @@ namespace NullGC.Collections.Tests
     [TestClass]
     public class ValueListTests : AssertMemoryAllFreedBase
     {
+        public static TestContext SharedTestContext { get; set; }
+        public TestContext TestContext { get; set; }
+
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            SharedTestContext = context;
+        }
+
         public ValueListTests()
-            : base(new MSTestOutputHelper(), false, true)
+            : base(new MSTestOutputHelper(SharedTestContext), false, true)
         {
         }
 
@@ -106,20 +112,6 @@ namespace NullGC.Collections.Tests
             Assert.AreEqual(47, list.LastIndexOf(11111));
             Assert.IsTrue(list.Contains(11111));
             list.Dispose();
-        }
-
-        // 一个简单的 MSTest 输出工具实现，用于适配 AssertMemoryAllFreedBase 基类。
-        private class MSTestOutputHelper : Xunit.Abstractions.ITestOutputHelper
-        {
-            public void WriteLine(string message)
-            {
-                Console.WriteLine(message);
-            }
-
-            public void WriteLine(string format, params object[] args)
-            {
-                Console.WriteLine(format, args);
-            }
         }
     }
 }
