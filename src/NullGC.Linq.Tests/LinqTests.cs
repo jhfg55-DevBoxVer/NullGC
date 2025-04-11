@@ -4,7 +4,11 @@ using NullGC.Linq.Enumerators;
 using NullGC.TestCommons;
 
 namespace NullGC.Linq.Tests;
-
+// 添加占位符类解决 TestContextPlaceholder 未定义的问题
+internal static class TestContextPlaceholder
+{
+    public static TestContext Instance => null;
+}
 [TestClass]
 public class LinqTests : AssertMemoryAllFreedBase
 {
@@ -23,9 +27,9 @@ public class LinqTests : AssertMemoryAllFreedBase
     public TestContext TestContext { get; set; }
 
     public LinqTests()
-        : base(new MSTestOutputHelper(TestContextPlaceholder.Instance)) // 使用占位符，实际 MSTest 会自动设置 TestContext
+    : base(new MSTestOutputHelper(TestContextPlaceholder.Instance), false, false) // Use placeholder; MSTest will automatically set TestContext.
     {
-        // 备用：在 MSTest 中可以在 TestInitialize 方法中初始化 MSTestOutputHelper，通过 TestContext 传入
+        // Backup: In MSTest you can also initialize MSTestOutputHelper in the TestInitialize method by passing in TestContext.
         _emptyArray = ValueArray<int>.Empty;
         _valList1 = new ValueList<int>(0) { 7, 0, 4, 5, 6, 1, 2, 3, 8, 9 };
         _intArr = new int[_count];
@@ -51,6 +55,7 @@ public class LinqTests : AssertMemoryAllFreedBase
         _bigStructMin = BigStructArrSystemLinqWhereOrderByTakeAverage();
         _smallStructMin = SmallStructArrSystemLinqWhereOrderByTakeAverage();
     }
+
 
     [TestCleanup]
     public override void Dispose()
