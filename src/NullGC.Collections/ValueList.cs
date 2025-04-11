@@ -695,4 +695,58 @@ public struct ValueList<T> : ILinqEnumerable<T, UnmanagedArrayEnumerator<T>>, IU
         result = default;
         return false;
     }
+    /// <summary>
+    /// 从当前列表中提取所有元素，并清空列表，返回一个 DrainEnumerable 迭代器
+    /// </summary>
+    public DrainEnumerable Drain()
+    {
+        int drainedCount = _size;
+        ValueArray<T> drainedItems = _items; // 复制底层数组引用
+        _size = 0; // 清空列表
+        return new DrainEnumerable(drainedItems, drainedCount);
+    }
+
+    /// <summary>
+    /// 类似于 Rust 中 drain 操作的迭代器，
+    /// 在迭代过程中返回被提取的元素。
+    /// </summary>
+    public struct DrainEnumerable : IEnumerable<T>, IEnumerator<T>
+    {
+        private readonly ValueArray<T> _items;
+        private readonly int _count;
+        private int _index;
+
+        internal DrainEnumerable(ValueArray<T> items, int count)
+        {
+            _items = items;
+            _count = count;
+            _index = -1;
+        }
+
+        public T Current => _items.GetUnchecked(_index);
+
+        object IEnumerator.Current => Current;
+
+        public bool MoveNext()
+        {
+            _index++;
+            return _index < _count;
+        }
+
+        public void Reset()
+        {
+            _index = -1;
+        }
+
+        public DrainEnumerable GetEnumerator() => this;
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => this;
+
+        IEnumerator IEnumerable.GetEnumerator() => this;
+
+        public void Dispose()
+        {
+            // 根据需要处理 _items 的释放
+        }
+    }
 }
