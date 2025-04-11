@@ -14,7 +14,7 @@ namespace NullGC.DragRace.Benchmarks
         public AotUncachedValueListBenchmarks()
         {
             AddJob(Job.Default
-                .WithToolchain(NativeAotToolchain.Instance)
+                .WithToolchain(NativeAotToolchain.Net90)
                 .WithWarmupCount(1)
                 .WithIterationCount(5));
         }

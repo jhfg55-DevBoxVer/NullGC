@@ -2,7 +2,6 @@
 using NullGC.Allocators;
 using NullGC.Allocators.Extensions;
 using NullGC.Collections;
-using Xunit.Sdk;
 
 namespace NullGC.DragRace.Benchmarks;
 
