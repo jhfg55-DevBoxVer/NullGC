@@ -6,18 +6,7 @@ defaults:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'main'
-#      - 'develop'
-      - 'release/**'
-      - 'feature/**'
-      - 'hotfix/**'
-      - 'gha-test'
-    paths-ignore:
-      - '.github/ISSUE_TEMPLATE/**'
-      - '*.md'
-      - 'docs/**'
+
 env:
   CICD: 1
 
