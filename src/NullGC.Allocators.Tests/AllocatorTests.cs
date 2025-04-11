@@ -1,49 +1,48 @@
 using System.Runtime.CompilerServices;
-using NullGC.TestCommons;
-using Assert = Xunit.Assert;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NullGC.Allocators.Tests;
 
-[Collection("AllocatorContext")]
+[TestClass]
 public class AllocatorTests : IDisposable
 {
     public AllocatorTests()
     {
         AllocatorContext.SetImplementation(new DefaultAllocatorContextImpl());
     }
-    
-    [Fact]
+
+    [TestMethod]
     public void AllocatorContext_SetAllocatorProvider_WillThrowIfAllocatorProviderIsNotSet()
     {
-        Assert.Throws<InvalidOperationException>(() => AllocatorContext.BeginAllocationScope());
+        Assert.ThrowsException<InvalidOperationException>(() => AllocatorContext.BeginAllocationScope());
     }
 
-    [Fact]
+    [TestMethod]
     public void AllocatorContext_SetAllocatorProvider_WillThrowIfAllocatorProviderIdIsInvalid()
     {
-        Assert.Throws<ArgumentException>(() =>
+        Assert.ThrowsException<ArgumentException>(() =>
             AllocatorContext.SetAllocatorProvider(new DefaultAlignedNativeMemoryAllocator(),
-                (int) AllocatorTypes.Invalid, true));
+                (int)AllocatorTypes.Invalid, true));
     }
 
-    [Fact]
+    [TestMethod]
     public void AllocatorContext_SetAllocatorProvider_WillThrowIfAllocatorProviderWithSameIdIsAlreadySet()
     {
         AllocatorContext.SetAllocatorProvider(new DefaultAlignedNativeMemoryAllocator(),
-            (int) AllocatorTypes.Default, true);
-        Assert.Throws<ArgumentException>(() =>
+            (int)AllocatorTypes.Default, true);
+        Assert.ThrowsException<ArgumentException>(() =>
             AllocatorContext.SetAllocatorProvider(new DefaultAlignedNativeMemoryAllocator(),
-                (int) AllocatorTypes.Default, true));
+                (int)AllocatorTypes.Default, true));
     }
 
-    [Fact]
+    [TestMethod]
     public void CanAllocateAndFreeOnStaticScopedProviderAndReturnedAllocatorIsTheSame()
     {
         var nativeAllocator = new DefaultAlignedNativeMemoryAllocator();
         var nativeBuffer = new DefaultAllocationPooler(nativeAllocator, 1000);
         AllocatorContext.SetAllocatorProvider(
             new AllocatorPool<ArenaAllocator>(p => new ArenaAllocator(p, p, nativeBuffer)),
-            (int) AllocatorTypes.Default, true);
+            (int)AllocatorTypes.Default, true);
         IMemoryAllocator allocator;
         using (AllocatorContext.BeginAllocationScope())
         {
@@ -51,7 +50,7 @@ public class AllocatorTests : IDisposable
             {
                 allocator = AllocatorContext.GetAllocator();
                 var mem = allocator.Allocate(1);
-                Unsafe.WriteUnaligned(mem.ToPointer(), (byte) 47);
+                Unsafe.WriteUnaligned(mem.ToPointer(), (byte)47);
                 AllocatorContext.GetAllocator().Free(mem);
             }
         }
@@ -62,21 +61,21 @@ public class AllocatorTests : IDisposable
             {
                 var oldAlloc = allocator;
                 allocator = AllocatorContext.GetAllocator();
-                Assert.Equal(allocator, oldAlloc);
+                Assert.AreEqual(allocator, oldAlloc);
                 var mem = allocator.Allocate(100000);
-                Unsafe.WriteUnaligned(mem.ToPointer(), (byte) 47);
+                Unsafe.WriteUnaligned(mem.ToPointer(), (byte)47);
                 AllocatorContext.GetAllocator().Free(mem);
             }
         }
     }
 
-    [Fact]
+    [TestMethod]
     public void CanAllocateAndFreeOnPooledScopedProviderAndPoolIsWorking()
     {
         var nativeAllocator = new DefaultAlignedNativeMemoryAllocator();
         AllocatorContext.SetAllocatorProvider(
             new AllocatorPool<ArenaAllocator>(p => new ArenaAllocator(p, p, nativeAllocator)),
-            (int) AllocatorTypes.Default, true);
+            (int)AllocatorTypes.Default, true);
         IMemoryAllocator allocator;
         using (AllocatorContext.BeginAllocationScope())
         {
@@ -84,7 +83,7 @@ public class AllocatorTests : IDisposable
             {
                 allocator = AllocatorContext.GetAllocator();
                 var mem = allocator.Allocate(1);
-                Unsafe.WriteUnaligned(mem.ToPointer(), (byte) 47);
+                Unsafe.WriteUnaligned(mem.ToPointer(), (byte)47);
                 AllocatorContext.GetAllocator().Free(mem);
             }
         }
@@ -95,7 +94,7 @@ public class AllocatorTests : IDisposable
             {
                 var oldAlloc = allocator;
                 allocator = AllocatorContext.GetAllocator();
-                Assert.Equal(allocator, oldAlloc);
+                Assert.AreEqual(allocator, oldAlloc);
                 var mem = allocator.Allocate(10000);
                 Unsafe.InitBlockUnaligned(mem.ToPointer(), 47, 10000);
                 AllocatorContext.GetAllocator().Free(mem);
@@ -103,12 +102,12 @@ public class AllocatorTests : IDisposable
         }
     }
 
-    [Fact]
+    [TestMethod]
     public void CanAllocateAndFreeOnPooledCachedScopedProviderAndPoolIsWorkingAndAllFreedAtEnd()
     {
         var cache = new DefaultAllocationPooler(new DefaultAlignedNativeMemoryAllocator(), 1000);
         var arenaAllocatorPool = new AllocatorPool<ArenaAllocator>(p => new ArenaAllocator(p, p, cache));
-        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int) AllocatorTypes.Default, true);
+        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int)AllocatorTypes.Default, true);
 
         IMemoryAllocator allocator;
         using (AllocatorContext.BeginAllocationScope())
@@ -117,7 +116,7 @@ public class AllocatorTests : IDisposable
             {
                 allocator = AllocatorContext.GetAllocator();
                 var mem = allocator.Allocate(1);
-                Unsafe.WriteUnaligned(mem.ToPointer(), (byte) 47);
+                Unsafe.WriteUnaligned(mem.ToPointer(), (byte)47);
                 AllocatorContext.GetAllocator().Free(mem);
             }
         }
@@ -128,203 +127,202 @@ public class AllocatorTests : IDisposable
             {
                 var oldAlloc = allocator;
                 allocator = AllocatorContext.GetAllocator();
-                Assert.Equal(allocator, oldAlloc);
+                Assert.AreEqual(allocator, oldAlloc);
                 var mem = allocator.Allocate(10000);
                 Unsafe.InitBlockUnaligned(mem.ToPointer(), 47, 10000);
                 AllocatorContext.GetAllocator().Free(mem);
             }
         }
 
-        Assert.Equal(arenaAllocatorPool.SelfTotalAllocated, arenaAllocatorPool.SelfTotalFreed);
+        Assert.AreEqual(arenaAllocatorPool.SelfTotalAllocated, arenaAllocatorPool.SelfTotalFreed);
         arenaAllocatorPool.ClearCachedMemory();
-        Assert.Equal(cache.ClientTotalAllocated, cache.ClientTotalFreed);
-        Thread.Sleep(1500); // go past cache ttl
+        Assert.AreEqual(cache.ClientTotalAllocated, cache.ClientTotalFreed);
+        System.Threading.Thread.Sleep(1500); // go past cache ttl
         cache.Prune(0);
-        Assert.Equal(cache.SelfTotalAllocated, cache.SelfTotalFreed);
+        Assert.AreEqual(cache.SelfTotalAllocated, cache.SelfTotalFreed);
     }
 
-    [Fact]
+    [TestMethod]
     public void AllocatorContextReturnsToPoolWhenThreadDies()
     {
         var cache = new DefaultAllocationPooler(new DefaultAlignedNativeMemoryAllocator(), 1000);
         var arenaAllocatorPool = new AllocatorPool<ArenaAllocator>(p => new ArenaAllocator(p, p, cache));
-        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int) AllocatorTypes.Default, true);
+        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int)AllocatorTypes.Default, true);
 
-        Assert.Empty(((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool);
-        var mainThreadId = Thread.CurrentThread.ManagedThreadId;
-        var execCtx = Thread.CurrentThread.ExecutionContext;
-        Assert.NotNull(execCtx);
+        Assert.AreEqual(0, ((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool.Count);
+        var mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+        var execCtx = System.Threading.Thread.CurrentThread.ExecutionContext;
+        Assert.IsNotNull(execCtx);
 
         void Worker()
         {
-            Assert.NotEqual(mainThreadId, Thread.CurrentThread.ManagedThreadId);
-            Assert.Empty(((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool);
-            // Assert.Null(ContextContainer.GetPerProviderContainer(0).ContextContainer.Value);
+            Assert.AreNotEqual(mainThreadId, System.Threading.Thread.CurrentThread.ManagedThreadId);
+            Assert.AreEqual(0, ((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool.Count);
             using (AllocatorContext.BeginAllocationScope())
             {
-                Assert.NotNull(((DefaultAllocatorContextImpl)AllocatorContext.Impl).GetPerProviderContainer((int)AllocatorTypes.Default).Context!.Value);
-                Assert.Empty(((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool);
+                Assert.IsNotNull(((DefaultAllocatorContextImpl)AllocatorContext.Impl).GetPerProviderContainer((int)AllocatorTypes.Default).Context!.Value);
+                Assert.AreEqual(0, ((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool.Count);
                 AllocatorContext.GetAllocator();
-                Assert.Empty(((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool);
+                Assert.AreEqual(0, ((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool.Count);
             }
 
-            Assert.NotNull(((DefaultAllocatorContextImpl)AllocatorContext.Impl).GetPerProviderContainer((int)AllocatorTypes.Default).Context!.Value);
+            Assert.IsNotNull(((DefaultAllocatorContextImpl)AllocatorContext.Impl).GetPerProviderContainer((int)AllocatorTypes.Default).Context!.Value);
 
-            Assert.Empty(((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool);
-            Assert.NotEqual(execCtx, Thread.CurrentThread.ExecutionContext);
+            Assert.AreEqual(0, ((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool.Count);
+            Assert.AreNotEqual(execCtx, System.Threading.Thread.CurrentThread.ExecutionContext);
         }
 
-        var thread1 = new Thread(Worker);
+        var thread1 = new System.Threading.Thread(Worker);
         thread1.Start();
         thread1.Join();
-        Assert.Equal(execCtx, Thread.CurrentThread.ExecutionContext);
-        Assert.Single(((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool);
-        Assert.True(((IMemoryAllocationTrackable) arenaAllocatorPool).IsAllFreed);
+        Assert.AreEqual(execCtx, System.Threading.Thread.CurrentThread.ExecutionContext);
+        Assert.AreEqual(1, ((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool.Count);
+        Assert.IsTrue(((IMemoryAllocationTrackable)arenaAllocatorPool).IsAllFreed);
         AllocatorContext.ClearProvidersAndAllocations();
-        Assert.Empty(((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool);
+        Assert.AreEqual(0, ((DefaultAllocatorContextImpl)AllocatorContext.Impl).ContextPool.Count);
     }
 
-    [Fact]
+    [TestMethod]
     public void FixedRetentionNativeMemoryCache_ExpirationBehaviorWhenCleanupThresholdIsZero()
     {
         var cache = new DefaultAllocationPooler(new DefaultAlignedNativeMemoryAllocator(), 1000);
         var mem1 = cache.Allocate(1000);
-        Assert.Equal((ulong) (cache.GetAllocSize(1000)), cache.SelfTotalAllocated);
+        Assert.AreEqual((ulong)cache.GetAllocSize(1000), cache.SelfTotalAllocated);
         cache.Free(mem1);
-        Assert.Equal((ulong) (cache.GetAllocSize(1000)), cache.SelfTotalAllocated);
-        Assert.Equal((ulong) 0, cache.SelfTotalFreed);
+        Assert.AreEqual((ulong)cache.GetAllocSize(1000), cache.SelfTotalAllocated);
+        Assert.AreEqual((ulong)0, cache.SelfTotalFreed);
         return; //not working since dynamic ttl
-        Thread.Sleep(1500);
+        System.Threading.Thread.Sleep(1500);
         cache.Prune();
-        Assert.True(((IMemoryAllocationTrackable) cache).IsAllFreed);
+        Assert.IsTrue(((IMemoryAllocationTrackable)cache).IsAllFreed);
         var mem2 = cache.Allocate(100);
-        Assert.Equal((ulong) (cache.GetAllocSize(100)),
+        Assert.AreEqual((ulong)(cache.GetAllocSize(100)),
             cache.SelfTotalAllocated - cache.SelfTotalFreed);
         cache.Free(mem2);
-        Thread.Sleep(1500);
+        System.Threading.Thread.Sleep(1500);
         cache.Prune();
-        Assert.Equal(cache.SelfTotalAllocated, cache.SelfTotalFreed);
+        Assert.AreEqual(cache.SelfTotalAllocated, cache.SelfTotalFreed);
         cache.ClearCachedMemory();
-        Assert.Equal(cache.SelfTotalAllocated, cache.SelfTotalFreed);
+        Assert.AreEqual(cache.SelfTotalAllocated, cache.SelfTotalFreed);
     }
 
-    [Fact]
+    [TestMethod]
     public void FixedRetentionNativeMemoryCache_ExpirationBehavior()
     {
         var cache = new DefaultAllocationPooler(new DefaultAlignedNativeMemoryAllocator(), 1000);
         var mem1 = cache.Allocate(1000);
-        Assert.Equal((ulong) (cache.GetAllocSize(1000)), cache.SelfTotalAllocated);
+        Assert.AreEqual((ulong)cache.GetAllocSize(1000), cache.SelfTotalAllocated);
         cache.Free(mem1); // mem1 < ttl && < Th
-        Assert.Equal((ulong) (cache.GetAllocSize(1000)), cache.SelfTotalAllocated);
-        Assert.Equal((ulong) 0, cache.SelfTotalFreed);
-        Thread.Sleep(1500);
+        Assert.AreEqual((ulong)cache.GetAllocSize(1000), cache.SelfTotalAllocated);
+        Assert.AreEqual((ulong)0, cache.SelfTotalFreed);
+        System.Threading.Thread.Sleep(1500);
         cache.Prune(); // mem1 < Th
-        Assert.Equal((ulong) (cache.GetAllocSize(1000)), cache.SelfTotalAllocated);
-        Assert.Equal((ulong) 0, cache.SelfTotalFreed);
+        Assert.AreEqual((ulong)cache.GetAllocSize(1000), cache.SelfTotalAllocated);
+        Assert.AreEqual((ulong)0, cache.SelfTotalFreed);
         var mem2 = cache.Allocate(2000);
-        Assert.Equal((ulong) (cache.GetAllocSize(1000) + cache.GetAllocSize(2000)),
+        Assert.AreEqual((ulong)(cache.GetAllocSize(1000) + cache.GetAllocSize(2000)),
             cache.SelfTotalAllocated - cache.SelfTotalFreed);
         return; //not working since dynamic ttl 
         cache.Free(mem2); // mem1 gone, mem2 < ttl > Th
-        Assert.Equal((ulong) (cache.GetAllocSize(2000)), cache.SelfTotalAllocated - cache.SelfTotalFreed);
-        Thread.Sleep(500);
+        Assert.AreEqual((ulong)(cache.GetAllocSize(2000)), cache.SelfTotalAllocated - cache.SelfTotalFreed);
+        System.Threading.Thread.Sleep(500);
         cache.Prune(); // mem2 > Th && < ttl
-        Assert.Equal((ulong) (cache.GetAllocSize(2000)), cache.SelfTotalAllocated - cache.SelfTotalFreed);
-        Thread.Sleep(1000);
+        Assert.AreEqual((ulong)(cache.GetAllocSize(2000)), cache.SelfTotalAllocated - cache.SelfTotalFreed);
+        System.Threading.Thread.Sleep(1000);
         cache.Prune();
-        Assert.Equal(cache.SelfTotalAllocated, cache.SelfTotalFreed);
+        Assert.AreEqual(cache.SelfTotalAllocated, cache.SelfTotalFreed);
         cache.ClearCachedMemory();
-        Assert.Equal(cache.SelfTotalAllocated, cache.SelfTotalFreed);
+        Assert.AreEqual(cache.SelfTotalAllocated, cache.SelfTotalFreed);
     }
 
-    [Fact]
+    [TestMethod]
     public void FixedRetentionNativeMemoryCache_ClearCacheMemoryIsWorking()
     {
         var cache = new DefaultAllocationPooler(new DefaultAlignedNativeMemoryAllocator(), 1000);
         var mem1 = cache.Allocate(1000);
-        Assert.Equal((ulong) (cache.GetAllocSize(1000)), cache.SelfTotalAllocated);
-        Assert.Equal((ulong) 0, cache.SelfTotalFreed);
+        Assert.AreEqual((ulong)cache.GetAllocSize(1000), cache.SelfTotalAllocated);
+        Assert.AreEqual((ulong)0, cache.SelfTotalFreed);
         cache.Free(mem1);
-        Assert.Equal((ulong) (cache.GetAllocSize(1000)), cache.SelfTotalAllocated);
-        Assert.Equal((ulong) 0, cache.SelfTotalFreed);
+        Assert.AreEqual((ulong)cache.GetAllocSize(1000), cache.SelfTotalAllocated);
+        Assert.AreEqual((ulong)0, cache.SelfTotalFreed);
         cache.ClearCachedMemory();
-        Assert.Equal(cache.SelfTotalAllocated, cache.SelfTotalFreed);
+        Assert.AreEqual(cache.SelfTotalAllocated, cache.SelfTotalFreed);
     }
 
-    [Fact]
+    [TestMethod]
     public void NestedSameProviderTypeScope()
     {
         var allocPooler = new DefaultAllocationPooler(new DefaultAlignedNativeMemoryAllocator(), 1000);
         var arenaAllocatorPool = new AllocatorPool<ArenaAllocator>(p => new ArenaAllocator(p, p, allocPooler));
-        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int) AllocatorTypes.Default, true);
+        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int)AllocatorTypes.Default, true);
 
         using (AllocatorContext.BeginAllocationScope())
         {
             AllocatorContext.GetAllocator().Allocate(1000);
-            Assert.Equal((ulong) 1000, arenaAllocatorPool.ClientTotalAllocated);
+            Assert.AreEqual((ulong)1000, arenaAllocatorPool.ClientTotalAllocated);
 
             using (AllocatorContext.BeginAllocationScope())
             {
                 AllocatorContext.GetAllocator().Allocate(1500);
-                Assert.Equal((ulong) (1000 + 1500), arenaAllocatorPool.ClientTotalAllocated);
+                Assert.AreEqual((ulong)(1000 + 1500), arenaAllocatorPool.ClientTotalAllocated);
             }
 
-            Assert.Equal((ulong) (1000 + 1500), arenaAllocatorPool.ClientTotalAllocated);
-            Assert.Equal((ulong) 1500, arenaAllocatorPool.ClientTotalFreed);
+            Assert.AreEqual((ulong)(1000 + 1500), arenaAllocatorPool.ClientTotalAllocated);
+            Assert.AreEqual((ulong)1500, arenaAllocatorPool.ClientTotalFreed);
 
             allocPooler.ClearCachedMemory();
-            Assert.Equal((ulong) allocPooler.GetAllocSize(ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead), allocPooler.SelfTotalFreed);
+            Assert.AreEqual((ulong)allocPooler.GetAllocSize(ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead), allocPooler.SelfTotalFreed);
         }
 
-        Assert.Equal((ulong) (1000 + 1500), arenaAllocatorPool.ClientTotalAllocated);
-        Assert.Equal((ulong) (1500 + 1000), arenaAllocatorPool.ClientTotalFreed);
+        Assert.AreEqual((ulong)(1000 + 1500), arenaAllocatorPool.ClientTotalAllocated);
+        Assert.AreEqual((ulong)(1500 + 1000), arenaAllocatorPool.ClientTotalFreed);
 
         allocPooler.ClearCachedMemory();
-        Assert.Equal(
-            (ulong) (allocPooler.GetAllocSize((ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead)) * 2),
+        Assert.AreEqual(
+            (ulong)(allocPooler.GetAllocSize((ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead)) * 2),
             allocPooler.SelfTotalFreed);
     }
 
-    [Fact]
+    [TestMethod]
     public void NestedDifferentProviderTypeScope()
     {
         var allocPooler = new DefaultAllocationPooler(new DefaultAlignedNativeMemoryAllocator(), 1000);
         var arenaAllocatorPool = new AllocatorPool<ArenaAllocator>(p => new ArenaAllocator(p, p, allocPooler));
-        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int) AllocatorTypes.Default, true);
+        AllocatorContext.SetAllocatorProvider(arenaAllocatorPool, (int)AllocatorTypes.Default, true);
         var arenaAllocatorPool2 = new AllocatorPool<ArenaAllocator>(p => new ArenaAllocator(p, p, allocPooler));
         AllocatorContext.SetAllocatorProvider(arenaAllocatorPool2, 16, true);
 
         using (AllocatorContext.BeginAllocationScope())
         {
             AllocatorContext.GetAllocator().Allocate(1000);
-            Assert.Equal((ulong) 1000, arenaAllocatorPool.ClientTotalAllocated);
+            Assert.AreEqual((ulong)1000, arenaAllocatorPool.ClientTotalAllocated);
 
             using (AllocatorContext.BeginAllocationScope(16))
             {
                 AllocatorContext.GetAllocator(16).Allocate(1500);
-                Assert.Equal((ulong) 1000, arenaAllocatorPool.ClientTotalAllocated);
-                Assert.Equal((ulong) 1500, arenaAllocatorPool2.ClientTotalAllocated);
+                Assert.AreEqual((ulong)1000, arenaAllocatorPool.ClientTotalAllocated);
+                Assert.AreEqual((ulong)1500, arenaAllocatorPool2.ClientTotalAllocated);
             }
 
-            Assert.Equal((ulong) 1000, arenaAllocatorPool.ClientTotalAllocated);
-            Assert.Equal((ulong) 0, arenaAllocatorPool.ClientTotalFreed);
-            Assert.Equal((ulong) 1500, arenaAllocatorPool2.ClientTotalAllocated);
-            Assert.Equal((ulong) 1500, arenaAllocatorPool2.ClientTotalFreed);
+            Assert.AreEqual((ulong)1000, arenaAllocatorPool.ClientTotalAllocated);
+            Assert.AreEqual((ulong)0, arenaAllocatorPool.ClientTotalFreed);
+            Assert.AreEqual((ulong)1500, arenaAllocatorPool2.ClientTotalAllocated);
+            Assert.AreEqual((ulong)1500, arenaAllocatorPool2.ClientTotalFreed);
 
             allocPooler.ClearCachedMemory();
-            Assert.Equal(
-                (ulong) allocPooler.GetAllocSize(ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead),
+            Assert.AreEqual(
+                (ulong)allocPooler.GetAllocSize(ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead),
                 allocPooler.SelfTotalFreed);
         }
 
-        Assert.Equal((ulong) 1000, arenaAllocatorPool.ClientTotalAllocated);
-        Assert.Equal((ulong) 1000, arenaAllocatorPool.ClientTotalFreed);
+        Assert.AreEqual((ulong)1000, arenaAllocatorPool.ClientTotalAllocated);
+        Assert.AreEqual((ulong)1000, arenaAllocatorPool.ClientTotalFreed);
 
-        Assert.Equal((ulong) 1500, arenaAllocatorPool2.ClientTotalFreed);
-        Assert.Equal((ulong) 1500, arenaAllocatorPool2.ClientTotalFreed);
+        Assert.AreEqual((ulong)1500, arenaAllocatorPool2.ClientTotalFreed);
+        Assert.AreEqual((ulong)1500, arenaAllocatorPool2.ClientTotalFreed);
 
         allocPooler.ClearCachedMemory();
-        Assert.Equal((ulong) ( allocPooler.GetAllocSize((ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead)) * 2), allocPooler.SelfTotalFreed);
+        Assert.AreEqual((ulong)(allocPooler.GetAllocSize((ArenaAllocator.DefaultPageSize - allocPooler.MetadataOverhead)) * 2), allocPooler.SelfTotalFreed);
     }
 
     public void Dispose()

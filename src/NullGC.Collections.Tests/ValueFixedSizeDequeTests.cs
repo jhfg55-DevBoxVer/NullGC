@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NullGC.TestCommons;
+﻿using NullGC.TestCommons;
 
 namespace NullGC.Collections.Tests
 {
