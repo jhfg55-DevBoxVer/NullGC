@@ -23,7 +23,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - name: Run benchmark
@@ -37,9 +37,6 @@ jobs:
         with:
           name: benchmark-result-page
           path: './artifacts/BenchmarkResultPage/**'
-
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
