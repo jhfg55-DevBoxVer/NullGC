@@ -49,6 +49,20 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NullGC.Analyzer.Tests", "Nu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzer", "Analyzer", "{41481A0C-9B12-473F-8277-8E1BA753DCA7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		..\scripts\Build.ps1 = ..\scripts\Build.ps1
+		..\scripts\Clean.ps1 = ..\scripts\Clean.ps1
+		..\scripts\CleanAll.ps1 = ..\scripts\CleanAll.ps1
+		..\scripts\GenBenchmarkPage.ps1 = ..\scripts\GenBenchmarkPage.ps1
+		..\scripts\Pack.ps1 = ..\scripts\Pack.ps1
+		..\scripts\PublishNuget.ps1 = ..\scripts\PublishNuget.ps1
+		..\scripts\Restore.ps1 = ..\scripts\Restore.ps1
+		..\scripts\RunBenchmarks.ps1 = ..\scripts\RunBenchmarks.ps1
+		..\scripts\Test.ps1 = ..\scripts\Test.ps1
+		..\scripts\Variables.ps1 = ..\scripts\Variables.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
