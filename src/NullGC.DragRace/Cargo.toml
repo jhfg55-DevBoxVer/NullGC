@@ -1,0 +1,14 @@
+[package]
+name = "nullgc_dragrace"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# 此处可添加你的其他依赖
+
+[dev-dependencies]
+criterion = "0.4"
+
+[[bench]]
+name = "rust_vec_benchmarks"
+harness = false
