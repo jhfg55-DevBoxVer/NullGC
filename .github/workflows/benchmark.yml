@@ -38,6 +38,18 @@ jobs:
           name: benchmark-result-page
           path: './artifacts/BenchmarkResultPage/**'
 
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+  
+      - name: Run RustVecBenchmark Tests
+        run: |
+          cargo test --package RustVecBenchmark -- --nocapture
+
         
   publish-benchmark-result:
     needs: run-benchmark
